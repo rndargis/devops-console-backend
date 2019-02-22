@@ -1,0 +1,11 @@
+{
+    "api": {
+        "title": "$PROJECT_NAME",
+        "version": "0.0.0",
+        "description": "$PROJECT_DESC",
+        "swagger": {
+            "url": "/",
+            "disable_ui": false
+        }
+    }
+}

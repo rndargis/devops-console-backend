@@ -1,0 +1,2 @@
+recursive-include svc/config *
+recursive-include svc/resources *
