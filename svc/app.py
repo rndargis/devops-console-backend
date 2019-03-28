@@ -68,5 +68,13 @@ class App:
         # Create and share the core for all APIs
         self.app["core"] = getCore(config=config)
 
+        # Set background tasks (startup)
+        for background_task in getCore().startup_background_tasks():
+            self.app.on_startup.append(background_task)
+
+        # Set background tasks (cleanup)
+        for background_task in getCore().cleanup_background_tasks():
+            self.app.on_cleanup.append(background_task)
+
     def run(self):
         web.run_app(self.app, host="0.0.0.0", port=5000)
