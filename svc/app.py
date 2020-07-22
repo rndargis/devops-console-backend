@@ -8,7 +8,7 @@ import os
 from .config import Config
 from .core import getCore
 from . import apiv1
-from . import prometheus
+from . import monitoring
 
 class FilterAccessLogger(AccessLogger):
     """/health and /metrics filter
@@ -55,15 +55,16 @@ class App:
             }
         )
         apiv1.setup(self.app)
-        prometheus.setup(self.app)
-        setup_swagger(
-            self.app,
-            title=config["api"]["title"],
-            api_version=config["api"]["version"],
-            description=config["api"]["description"],
-            swagger_url=config["api"]["swagger"]["url"],
-            disable_ui=config["api"]["swagger"]["disable_ui"]
-        )
+        monitoring.setup(self.app)
+
+        if config["api"]["swagger"]["url"] is not None:
+            setup_swagger(
+                self.app,
+                title=config["api"]["title"],
+                api_version=config["api"]["version"],
+                description=config["api"]["description"],
+                swagger_url=config["api"]["swagger"]["url"]
+            )
 
         # Create and share the core for all APIs
         self.app["core"] = getCore(config=config)

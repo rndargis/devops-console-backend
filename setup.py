@@ -57,16 +57,15 @@ class InitCommand(Command):
             [
                 "sed",
                 "-i",
-                "s/\\$PROJECT_NAME/{}/;s/\\$PROJECT_DESC/{}/".format(self.name, self.desc),
-                "svc/config/default.json",
-                "kubernetes/deploy/Chart.yaml"
+                "s/PROJECT_NAME/{}/;s/$PROJECT_DESC/{}/".format(self.name, self.desc),
+                "svc/config/default.json"
             ]
         )
         execute(
             [
                 "sed",
                 "-i",
-                "s/'\\$PROJECT_NAME'/'{}'/;s/'\\$PROJECT_DESC'/'{}'/".format(self.name, self.desc),
+                "s/'PROJECT_NAME'/'{}'/;s/'PROJECT_DESC'/'{}'/".format(self.name, self.desc),
                 "setup.py"
             ]
         )
@@ -110,16 +109,14 @@ class BootstrapCommand(Command):
         print("  > done")
 
 setup(
-    name='$PROJECT_NAME',
-    description='$PROJECT_DESC',
+    name='PROJECT_NAME',
+    description='PROJECT_DESC',
     url='',
     version='0.0.0',
     python_requires='>=3.7',
     packages=find_packages(exclude=['tests']),
     install_requires=[
-        'cchardet',
-        'aiodns',
-        'aiohttp',
+        'aiohttp[speedups]',
         'aiohttp-swagger',
         'prometheus_async[aiohttp]'
     ],

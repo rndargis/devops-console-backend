@@ -14,7 +14,7 @@ COPY MANIFEST.in .
 
 RUN pip install --no-cache-dir --compile .[prod]
 
-# Clean up
+# Remove source code to avoid any confusion with the real one executed.
 RUN rm -rf ./svc setup.py README.rst MANIFEST.in
 
 CMD gunicorn svc.run:application --bind 0.0.0.0:5000 --worker-class aiohttp.GunicornWebWorker --access-logfile - --log-level info
