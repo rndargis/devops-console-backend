@@ -1,2 +1,2 @@
-recursive-include svc/config *
-recursive-include svc/resources *
+recursive-include devops_console/config *
+recursive-include devops_console/resources *

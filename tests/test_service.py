@@ -21,7 +21,7 @@ import time
 import unittest
 import requests
 
-from svc.app import App #pylint: disable=E0401
+from devops_console.app import App #pylint: disable=E0401
 
 class ServiceTest(unittest.TestCase):
     '''Test suite for the whole service

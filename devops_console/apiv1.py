@@ -1,5 +1,3 @@
-"""Core module"""
-
 # Copyright 2019 mickybart
 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,16 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ..config import Config
-from . import helloworld
+from .apis import health
 
-class Core:
-    def __init__(self, config=None):
-        self.config = config if config else Config()
-        self.helloworld = helloworld.Helloworld()
+def setup(api):
+    api.add_routes(health.routes)
 
-    def startup_background_tasks(self):
-        return []
-
-    def cleanup_background_tasks(self):
-        return []
+    return api

@@ -80,7 +80,7 @@ class InitCommand(Command):
             [
                 "sed",
                 "-i",
-                "s/'PROJECT_NAME'/'{}'/;s/'PROJECT_DESC'/'{}'/".format(self.name, self.desc),
+                "s/'devops_console'/'{}'/;s/'DevOps Console Backend'/'{}'/".format(self.name, self.desc),
                 "setup.py"
             ]
         )
@@ -124,8 +124,8 @@ class BootstrapCommand(Command):
         print("  > done")
 
 setup(
-    name='PROJECT_NAME',
-    description='PROJECT_DESC',
+    name='devops_console',
+    description='DevOps Console Backend',
     url='',
     version='0.0.0',
     python_requires='>=3.7',
