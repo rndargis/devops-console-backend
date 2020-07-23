@@ -78,7 +78,8 @@ class App:
                 title=config["api"]["title"],
                 api_version=config["api"]["version"],
                 description=config["api"]["description"],
-                swagger_url=config["api"]["swagger"]["url"]
+                swagger_url=config["api"]["swagger"]["url"],
+                ui_version=3
             )
 
         # Create and share the core for all APIs
