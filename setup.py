@@ -133,7 +133,8 @@ setup(
     install_requires=[
         'aiohttp[speedups]',
         'aiohttp-swagger',
-        'prometheus_async[aiohttp]'
+        'prometheus_async[aiohttp]',
+        'devops_sccs'
     ],
     extras_require={
         'dev': [

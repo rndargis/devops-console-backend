@@ -13,12 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from aiohttp import web
+from aiohttp import web, WSCloseCode
 from aiohttp.web_log import AccessLogger
 from aiohttp_swagger import setup_swagger
 
 import logging
 import os
+import weakref
 
 from .config import Config
 from .core import getCore
@@ -85,9 +86,15 @@ class App:
         # Create and share the core for all APIs
         self.app["core"] = getCore(config=config)
 
+        # Create and share websockets
+        self.app["websockets"] = weakref.WeakSet()
+
         # Set background tasks (startup)
         for background_task in getCore().startup_background_tasks():
             self.app.on_startup.append(background_task)
+
+        # shutdown
+        self.app.on_shutdown.append(on_shutdown)
 
         # Set background tasks (cleanup)
         for background_task in getCore().cleanup_background_tasks():
@@ -95,3 +102,10 @@ class App:
 
     def run(self):
         web.run_app(self.app, host="0.0.0.0", port=5000)
+
+async def on_shutdown(app):
+    for ws in set(app["websockets"]):
+        await ws.close(
+            code=WSCloseCode.GOING_AWAY,
+            message="Server shutdown"
+            )

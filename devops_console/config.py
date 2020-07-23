@@ -43,6 +43,9 @@ class Config(dict):
 
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
 
+        if os.environ.get("BRANCH_NAME") is None:
+            os.environ["BRANCH_NAME"] = "undefined"
+
         config = self.__load_config()
         self.update(config)
 

@@ -15,10 +15,12 @@
 # limitations under the License.
 
 from ..config import Config
+from .sccs import Sccs
 
 class Core:
     def __init__(self, config=None):
         self.config = config if config else Config()
+        self.sccs = Sccs(config.get("sccs", {}))
 
     def startup_background_tasks(self):
         return []
