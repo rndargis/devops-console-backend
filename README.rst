@@ -1,7 +1,10 @@
-Python scaffold with aiohttp server
-===================================
+DevOps Console Backend
+======================
 
-Provides skeleton of an aiohttp server service with swagger, prometheus, sub application, sync to asyncio helper, docker, json config...
+Provides DevOps Console Backend. This is an alpha version without APIs stability.
+
+The main purpose is to provide a service (splitted in multiple services in the future) that will be able to communicate with all "DevOps" systems.
+It will be the entrypoint for a DevOps Console UI but not restrictive to this only concern.
 
 Quick Start
 -----------
@@ -19,7 +22,7 @@ With docker:
 
 .. code:: bash
 
-    docker build --build-arg BRANCH_NAME=dev -t scaffold-aiohttp .
+    docker build --build-arg BRANCH_NAME=dev -t devops-console-backend .
 
 Start the service
 ^^^^^^^^^^^^^^^^^
@@ -28,48 +31,25 @@ On a local installation:
 
 .. code:: bash
 
-    BRANCH_NAME=dev python -m svc.run
+    BRANCH_NAME=dev python -m devops_console.run
 
 With docker:
 
 .. code:: bash
 
-    docker run -it --rm -p 5000:5000 scaffold-aiohttp:latest
+    docker run -it --rm -p 5000:5000 devops-console-backend:latest
 
-Test it
-^^^^^^^
-
-.. code:: bash
-
-    curl http://localhost:5000/helloworld/
-    curl http://localhost:5000/helloworld/test
-
-
-Create a real project from the scaffold
----------------------------------------
+Swagger
+-------
 
 .. code:: bash
 
-    mkdir demo-aiohttp
-    cd demo-aiohttp
-    git init
-    git remote add tpl https://github.com/croixbleueqc/scaffold-aiohttp
-    git fetch tpl
-    git merge tpl/master
+    curl http://localhost:5000/api/doc/swagger.json
 
-    # Use python setup.py init -h for more details
-    python setup.py init --name=demo_aiohttp --desc="This is a demo" -g
+You can use the Swagger UI at this location: http://localhost:5000/api/doc/
 
-    # you are ready to go !
-    docker build --build-arg BRANCH_NAME=dev -t demo-aiohttp .
-    docker run -it --rm -p 5000:5000 demo-aiohttp:latest
+WebSocket
+---------
 
-    # alternative (install dependencies before)
-    # BRANCH_NAME=dev python -m demo_aiohttp.run
-
-BRANCH_NAME and configurations
-------------------------------
-
-BRANCH_NAME is the execution environment which permits to select the right configuration for the application in the config folder.
-
-See config.py for more details.
+This service provide RESTful and websocket support. In this early version, websocket is not necessary so useful but the final target is the ability to notify the requester in realtime about all systems changes.
+More documentation are available under apis/wscom1.py and wscom.py

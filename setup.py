@@ -150,11 +150,11 @@ setup(
     include_package_data=True,
 
     # Metadata
-    author='',
-    author_email='',
-    license='Apache-2.0',
+    author='Croix Bleue du Quebec',
+    author_email='devops@qc.croixbleue.ca',
+    license='LGPL-3.0-or-later',
     long_description=open('README.rst').read(),
-    keywords=[],
+    keywords=["devops", "backend"],
     classifiers=[
         # How mature is this project? Common values are
         #   3 - Alpha
@@ -166,7 +166,7 @@ setup(
         'Intended Audience :: Developers',
 
         # Pick your license as you wish (should match 'license' above)
-        'License :: OSI Approved :: Apache Software License',
+        'License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)',
 
         'Operating System :: OS Independent',
 
