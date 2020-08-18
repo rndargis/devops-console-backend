@@ -42,3 +42,11 @@ class Sccs:
     async def passthrough(self, plugin_id, session, request, args):
         async with self.core.context(plugin_id, session) as ctx:
             return await ctx.passthrough(request, args)
+
+    async def get_continuous_deployment_config(self, plugin_id, session, repository, args):
+        async with self.core.context(plugin_id, session) as ctx:
+            return await ctx.get_continuous_deployment_config(repository, args)
+
+    async def trigger_continuous_deployment(self, plugin_id, session, repository, environment, version, args):
+        async with self.core.context(plugin_id, session) as ctx:
+            await ctx.trigger_continuous_deployment(repository, environment, version, args)
