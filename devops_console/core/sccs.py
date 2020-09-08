@@ -21,8 +21,12 @@ class Sccs:
     """Sccs Core"""
 
     def __init__(self, config):
-        self.core = SccsCore(config)
-    
+        self.config = config
+        self.core = None
+
+    async def init(self, app):
+        self.core = await SccsCore.create(self.config)
+
     def context(self, plugin_id, args):
         return self.core.context(plugin_id, args)
 
@@ -50,3 +54,15 @@ class Sccs:
     async def trigger_continuous_deployment(self, plugin_id, session, repository, environment, version, args):
         async with self.core.context(plugin_id, session) as ctx:
             await ctx.trigger_continuous_deployment(repository, environment, version, args)
+
+    async def get_add_repository_contract(self, plugin_id, session):
+        async with self.core.context(plugin_id, session) as ctx:
+            return ctx.get_add_repository_contract()
+
+    async def add_repository(self, plugin_id, session, repository, template,  template_params, args):
+        async with self.core.context(plugin_id, session) as ctx:
+            return await ctx.add_repository(repository, template,  template_params, args)
+
+    async def compliance_report(self, plugin_id, session, args):
+        async with self.core.context(plugin_id, session) as ctx:
+            return await ctx.compliance_report(args)

@@ -27,7 +27,7 @@ class Core:
         self.sccs = Sccs(config.get("sccs", {}))
 
     def startup_background_tasks(self):
-        return []
+        return [self.sccs.init]
 
     def cleanup_background_tasks(self):
         return []

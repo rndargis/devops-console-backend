@@ -22,7 +22,7 @@ With docker:
 
 .. code:: bash
 
-    docker build --build-arg BRANCH_NAME=dev -t devops-console-backend .
+    docker build -t devops-console-backend .
 
 Start the service
 ^^^^^^^^^^^^^^^^^
@@ -37,7 +37,7 @@ With docker:
 
 .. code:: bash
 
-    docker run -it --rm -p 5000:5000 devops-console-backend:latest
+    docker run -it --rm -e BRANCH_NAME=dev -p 5000:5000 devops-console-backend:latest
 
 Swagger
 -------

@@ -102,4 +102,7 @@ class Config(dict):
             if isinstance(value, dict):
                 self.__deep_replace(value, **kwargs)
             elif isinstance(value, str):
-                dict_base[name] = value.format(**kwargs)
+                try:
+                    dict_base[name] = value.format(**kwargs)
+                except IndexError:
+                    pass

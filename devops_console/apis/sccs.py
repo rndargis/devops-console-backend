@@ -439,6 +439,10 @@ async def wscom_dispatcher(request, action, path, body):
             return await core.sccs.get_repositories(body["plugin"], body["session"], body.get("args"))
         elif path == "/repository/cd/config":
             return (await core.sccs.get_continuous_deployment_config(body["plugin"], body["session"], body["repository"], body.get("args"))).dumps()
+        elif path == "/repository/add/contract":
+            return await core.sccs.get_add_repository_contract(body["plugin"], body["session"])
+        elif path == "/repositories/compliance/report":
+            return await core.sccs.compliance_report(body["plugin"], body["session"], body.get("args"))
     elif action == "write":
         if path == "/repository/cd/trigger":
             return await core.sccs.trigger_continuous_deployment(
@@ -447,6 +451,15 @@ async def wscom_dispatcher(request, action, path, body):
                 body["repository"],
                 body["environment"],
                 body["version"],
+                body.get("args")
+            )
+        elif path == "/repository/add":
+            return await core.sccs.add_repository(
+                body["plugin"],
+                body["session"],
+                body["repository"],
+                body.get("template"),
+                body.get("template_params"),
                 body.get("args")
             )
     elif action == "":
