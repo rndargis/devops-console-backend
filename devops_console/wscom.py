@@ -16,8 +16,12 @@
 # along with devops-console-backend.  If not, see <https://www.gnu.org/licenses/>.
 
 from aiohttp import web, WSMsgType
+import asyncio
 import logging
 import json
+import weakref
+
+WATCHERS = "ws_watchers"
 
 async def wscom_generic_handler(request, dispatchers_app_key):
     """Websocket Generic handler
@@ -48,6 +52,7 @@ async def wscom_generic_handler(request, dispatchers_app_key):
 
     Reserved Messages request are:
     - "ws:ctl:close" : Ask the server to close the websocket
+    - "ws:watch:close" : Ask the server to close a watcher for the current websocket
     
     """
     ws = web.WebSocketResponse()
@@ -56,13 +61,14 @@ async def wscom_generic_handler(request, dispatchers_app_key):
     logging.info("connected")
     
     request.app["websockets"].add(ws)
+    request[WATCHERS] = weakref.WeakValueDictionary()
     dispatchers = request.app.get(dispatchers_app_key, {})
     try:
         async for msg in ws:
             if msg.type == WSMsgType.TEXT:
                 try:
                     data = json.loads(msg.data)
-                    _ = data["uniqueId"]
+                    uniqueId = data["uniqueId"]
                     request_headers = data.pop("request")
                     body = data.pop("dataRequest")
 
@@ -74,31 +80,118 @@ async def wscom_generic_handler(request, dispatchers_app_key):
                     # Closing the websocket
                     break
                 
-                if request_headers == "ws:ctl:close":
-                    # Closing the websocket
-                    break
+                if deeplink == "ws":
+                    if request_headers == "ws:ctl:close":
+                        # Closing the websocket
+                        break
+
+                    elif request_headers == "ws:watch:close":
+                        # Closing a watcher for this websocket
+                        asyncio.create_task(
+                            wscom_watcher_close(request, uniqueId)
+                        )
+
+                    else:
+                        data["error"] = f"The server doesn't support {request_headers}"
+                        logging.warning(data["error"])
+                        await ws.send_json(data)
+
+                    # Internal dispatch done
+                    continue
 
                 dispatch = dispatchers.get(deeplink)
 
                 if dispatch is None:
-                    logging.warn(f"There is no dispatcher to support {request_headers}")
                     data["error"] = f"There is no dispatcher to support {deeplink}"
+                    logging.warning(data["error"])
+                    await ws.send_json(data)
+                elif action == "watch":
+                    logging.info(f"watching {request_headers}")
+
+                    task = asyncio.create_task(
+                        wscom_watcher_run(
+                            request,
+                            ws,
+                            dispatch,
+                            data,
+                            action,
+                            path,
+                            body
+                        ),
+                        name=uniqueId
+                    )
+
+                    request[WATCHERS][uniqueId] = task
                 else:
                     logging.info(f"dispatching {request_headers}")
-                    try:
-                        data["dataResponse"] = await dispatch(request, action, path, body)
-                    except Exception as e:
-                        data["error"] = str(e)
 
-                await ws.send_json(data)
+                    asyncio.create_task(
+                        wscom_restful_run(
+                            request,
+                            ws,
+                            dispatch,
+                            data,
+                            action,
+                            path,
+                            body
+                        )
+                    )
 
             elif msg.type == WSMsgType.ERROR:
                 logging.error("ws connection closed with exception {}".format(ws.exception()))
     finally:
         logging.info("disconnected")
+
+        # Removes websocket
         request.app["websockets"].discard(ws)
 
+        # Closes all watchers for this request
+        for uniqueId in tuple(request[WATCHERS].keys()):
+            await wscom_watcher_close(request, uniqueId)
+
     return ws
+
+async def wscom_restful_run(request, ws, dispatch, data, action, path, body):
+    """RESTful like request
+    """
+    try:
+        data["dataResponse"] = await dispatch(request, action, path, body)
+    except Exception as e:
+        data["error"] = repr(e)
+    await ws.send_json(data)
+
+async def wscom_watcher_run(request, ws, dispatch, data, action, path, body):
+    """Watch request
+    """
+    try:
+        async for event in (await dispatch(request, action, path, body)):
+            data["dataResponse"] = event
+            logging.debug("received an event")
+            await ws.send_json(data)
+    except Exception as e:
+        data["error"] = repr(e)
+        data["dataResponse"] = None
+        logging.error(repr(e))
+        await ws.send_json(data)
+
+async def wscom_watcher_close(request, uniqueId):
+    """Closes a watcher
+    """
+    try:
+        task = request[WATCHERS].pop(uniqueId)
+    except KeyError:
+        logging.info(f"{uniqueId}: watcher already closed")
+        return
+
+    task.cancel()
+    try:
+        await task
+    except asyncio.CancelledError:
+        pass
+    except Exception as e:
+        logging.error(f"{uniqueId}: something wrong occured during watcher closing. error: {repr(e)}")
+
+    logging.info(f"{uniqueId}: watcher closed")
 
 class DispatcherUnsupportedRequest(Exception):
     def __init__(self, action, path):
