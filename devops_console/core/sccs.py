@@ -55,6 +55,14 @@ class Sccs:
         async with self.core.context(plugin_id, session) as ctx:
             await ctx.trigger_continuous_deployment(repository, environment, version, args)
 
+    async def get_runnable_environments(self, plugin_id, session, repository, args):
+        async with self.core.context(plugin_id, session) as ctx:
+            return await ctx.get_runnable_environments(repository, args)
+
+    async def bridge_repository_to_namespace(self, plugin_id, session, repository, environment, untrustable=True, args=None):
+        async with self.core.context(plugin_id, session) as ctx:
+            return await ctx.bridge_repository_to_namespace(repository, environment)
+
     async def get_add_repository_contract(self, plugin_id, session):
         async with self.core.context(plugin_id, session) as ctx:
             return ctx.get_add_repository_contract()

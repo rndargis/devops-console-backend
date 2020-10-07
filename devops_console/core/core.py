@@ -20,14 +20,19 @@
 
 from ..config import Config
 from .sccs import Sccs
+from .kubernetes import Kubernetes
 
 class Core:
     def __init__(self, config=None):
         self.config = config if config else Config()
         self.sccs = Sccs(config.get("sccs", {}))
+        self.kubernetes = Kubernetes(config.get("kubernetes", {}), self.sccs)
 
     def startup_background_tasks(self):
-        return [self.sccs.init]
+        return [
+            self.sccs.init,
+            self.kubernetes.init
+        ]
 
     def cleanup_background_tasks(self):
         return []

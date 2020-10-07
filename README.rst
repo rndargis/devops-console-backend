@@ -51,5 +51,4 @@ You can use the Swagger UI at this location: http://localhost:5000/api/doc/
 WebSocket
 ---------
 
-This service provide RESTful and websocket support. In this early version, websocket is not necessary so useful but the final target is the ability to notify the requester in realtime about all systems changes.
 More documentation are available under apis/wscom1.py and wscom.py

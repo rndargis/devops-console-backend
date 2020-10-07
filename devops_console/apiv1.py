@@ -20,6 +20,7 @@ from .wscom import wscom_setup
 from .apis import wscom1
 from .apis import health
 from .apis import sccs
+from .apis import kubernetes
 
 def setup(api):
     api.add_routes(health.routes)
@@ -27,5 +28,7 @@ def setup(api):
 
     api.add_routes(wscom1.routes)
     wscom_setup(api, wscom1.DISPATCHERS_APP_KEY, "sccs", sccs.wscom_dispatcher)
+
+    wscom_setup(api, wscom1.DISPATCHERS_APP_KEY, "k8s", kubernetes.wscom_dispatcher)
 
     return api
