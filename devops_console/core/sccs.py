@@ -53,7 +53,7 @@ class Sccs:
 
     async def trigger_continuous_deployment(self, plugin_id, session, repository, environment, version, args):
         async with self.core.context(plugin_id, session) as ctx:
-            await ctx.trigger_continuous_deployment(repository, environment, version, args)
+            return await ctx.trigger_continuous_deployment(repository, environment, version, args)
 
     async def get_runnable_environments(self, plugin_id, session, repository, args):
         async with self.core.context(plugin_id, session) as ctx:

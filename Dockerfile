@@ -5,8 +5,8 @@ WORKDIR /usr/src/app/
 
 # Requirements not yet available on pypi
 RUN pip install --no-cache-dir --compile git+https://github.com/croixbleueqc/python-typing-engine@d789169d52b08a151978dfac05e62196e0892b74
-RUN pip install --no-cache-dir --compile git+https://github.com/croixbleueqc/python-aiobitbucket@be7bbcd00892f09bf30983523e56c60029d838da
-RUN pip install --no-cache-dir --compile git+https://github.com/croixbleueqc/python-devops-sccs@9fe74d7169ff02a060df1fceaa20af787d50524d
+RUN pip install --no-cache-dir --compile git+https://github.com/croixbleueqc/python-aiobitbucket@9fa770010f149edebb3a776e0a3d0e65bd6df967
+RUN pip install --no-cache-dir --compile git+https://github.com/croixbleueqc/python-devops-sccs@069fdc43b5d4aa2b820a15ef940785d0e36a4df5
 RUN pip install --no-cache-dir --compile git+https://github.com/croixbleueqc/python-devops-kubernetes@c724ea4f11fd4838ce0040cd2db946634fb38379
 
 # Copy necessary files

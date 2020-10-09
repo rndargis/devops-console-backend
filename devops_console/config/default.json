@@ -1,7 +1,7 @@
 {
     "api": {
         "title": "devops_console",
-        "version": "0.0.3",
+        "version": "0.0.4",
         "description": "DevOps Console Backend",
         "swagger": {
             "url": "/api/doc"

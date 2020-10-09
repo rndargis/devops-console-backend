@@ -24,7 +24,6 @@ from .apis import kubernetes
 
 def setup(api):
     api.add_routes(health.routes)
-    api.add_subapp("/sccs/", sccs.sub)
 
     api.add_routes(wscom1.routes)
     wscom_setup(api, wscom1.DISPATCHERS_APP_KEY, "sccs", sccs.wscom_dispatcher)
