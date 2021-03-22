@@ -20,8 +20,18 @@ import asyncio
 import logging
 import json
 import weakref
+from typing_engine.typing import Typing2
 
 WATCHERS = "ws_watchers"
+
+class CustomEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Typing2):
+            return obj.dumps()
+        return json.JSONEncoder.default(self, obj)
+
+def custom_dumps(obj):
+    return json.dumps(obj, cls=CustomEncoder)
 
 async def wscom_generic_handler(request, dispatchers_app_key):
     """Websocket Generic handler
@@ -88,13 +98,13 @@ async def wscom_generic_handler(request, dispatchers_app_key):
                     elif request_headers == "ws:watch:close":
                         # Closing a watcher for this websocket
                         asyncio.create_task(
-                            wscom_watcher_close(request, uniqueId)
+                            wscom_watcher_close(request, uniqueId, ws=ws, data=data)
                         )
 
                     else:
                         data["error"] = f"The server doesn't support {request_headers}"
                         logging.warning(data["error"])
-                        await ws.send_json(data)
+                        await ws.send_json(data, dumps=custom_dumps)
 
                     # Internal dispatch done
                     continue
@@ -104,7 +114,7 @@ async def wscom_generic_handler(request, dispatchers_app_key):
                 if dispatch is None:
                     data["error"] = f"There is no dispatcher to support {deeplink}"
                     logging.warning(data["error"])
-                    await ws.send_json(data)
+                    await ws.send_json(data, dumps=custom_dumps)
                 elif action == "watch":
                     logging.info(f"watching {request_headers}")
 
@@ -122,6 +132,7 @@ async def wscom_generic_handler(request, dispatchers_app_key):
                     )
 
                     request[WATCHERS][uniqueId] = task
+
                 else:
                     logging.info(f"dispatching {request_headers}")
 
@@ -158,7 +169,7 @@ async def wscom_restful_run(request, ws, dispatch, data, action, path, body):
         data["dataResponse"] = await dispatch(request, action, path, body)
     except Exception as e:
         data["error"] = repr(e)
-    await ws.send_json(data)
+    await ws.send_json(data, dumps=custom_dumps)
 
 async def wscom_watcher_run(request, ws, dispatch, data, action, path, body):
     """Watch request
@@ -167,15 +178,17 @@ async def wscom_watcher_run(request, ws, dispatch, data, action, path, body):
         async for event in (await dispatch(request, action, path, body)):
             data["dataResponse"] = event
             logging.debug("received an event")
-            await ws.send_json(data)
+            await ws.send_json(data, dumps=custom_dumps)
     except Exception as e:
         data["error"] = repr(e)
         data["dataResponse"] = None
-        logging.error(repr(e))
-        await ws.send_json(data)
+        logging.exception(repr(e))
+        await ws.send_json(data, dumps=custom_dumps)
 
-async def wscom_watcher_close(request, uniqueId):
+async def wscom_watcher_close(request, uniqueId, ws=None, data=None):
     """Closes a watcher
+
+    ws and data are needed to send back a closed answer
     """
     try:
         task = request[WATCHERS].pop(uniqueId)
@@ -189,7 +202,19 @@ async def wscom_watcher_close(request, uniqueId):
     except asyncio.CancelledError:
         pass
     except Exception as e:
+        if data is not None:
+            data["error"]=repr(e)
         logging.error(f"{uniqueId}: something wrong occured during watcher closing. error: {repr(e)}")
+
+    if ws is not None and data is not None:
+        data["dataResponse"] = {
+            "status": "ws:watch:closed"
+        }
+        try:
+            await ws.send_json(data=data)
+        except ConnectionResetError:
+            # Most of the time we can send back an answer but if the application is closing it is possible that ws was disconnected before the send_json.
+            pass
 
     logging.info(f"{uniqueId}: watcher closed")
 

@@ -28,13 +28,22 @@ async def wscom_dispatcher(request, action, path, body):
         if path == "/repositories":
             return await core.sccs.get_repositories(body["plugin"], body["session"], body.get("args"))
         elif path == "/repository/cd/config":
-            return (await core.sccs.get_continuous_deployment_config(body["plugin"], body["session"], body["repository"], body.get("args"))).dumps()
-        elif path == "/repository/runnable/environments":
-            return await core.sccs.get_runnable_environments(body["plugin"], body["session"], body["repository"], body.get("args"))
+            return (await core.sccs.get_continuous_deployment_config(body["plugin"], body["session"], body["repository"], body.get("environments"), body.get("args"))).dumps()
+        elif path == "/repository/cd/environments_available":
+            return await core.sccs.get_continuous_deployment_environments_available(body["plugin"], body["session"], body["repository"], body.get("args"))
         elif path == "/repository/add/contract":
             return await core.sccs.get_add_repository_contract(body["plugin"], body["session"])
         elif path == "/repositories/compliance/report":
             return await core.sccs.compliance_report(body["plugin"], body["session"], body.get("args"))
+    elif action == "watch":
+        if path == "/repositories":
+            return core.sccs.watch_repositories(body["plugin"], body["session"], body.get("args"))
+        elif path == "/repository/cd/config":
+            return core.sccs.watch_continous_deployment_config(body["plugin"], body["session"], body["repository"], body.get("environments"), body.get("args"))
+        elif path == "/repository/cd/versions_available":
+            return core.sccs.watch_continuous_deployment_versions_available(body["plugin"], body["session"], body["repository"], body.get("args"))
+        elif path == "/repository/cd/environments_available":
+            return core.sccs.watch_continuous_deployment_environments_available(body["plugin"], body["session"], body["repository"], body.get("args"))
     elif action == "write":
         if path == "/repository/cd/trigger":
             return (await core.sccs.trigger_continuous_deployment(
