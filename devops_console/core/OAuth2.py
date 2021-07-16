@@ -28,5 +28,4 @@ class OAuth2(object):
     async def init(self, app):
         pass
     async def get_config(self):
-        print("get_config")
         return self.config
