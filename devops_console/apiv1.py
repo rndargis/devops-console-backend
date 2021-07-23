@@ -34,5 +34,4 @@ def setup(api):
 
     wscom_setup(api, wscom1.DISPATCHERS_APP_KEY, "oauth2", OAuth2.wscom_dispatcher)
 
-
     return api
