@@ -19,7 +19,6 @@ from devops_console.core.OAuth2 import OAuth2
 from ..core import Core
 from ..wscom import DispatcherUnsupportedRequest
 
-
 # WebSocket (wscom) section
 
 async def wscom_dispatcher(request, action, path, body):
@@ -27,7 +26,7 @@ async def wscom_dispatcher(request, action, path, body):
 
     if action == "read":
         if(path == "/config"):
-            return core.OAuth2.config
+            return await core.OAuth2.get_config()
             
     raise DispatcherUnsupportedRequest(action, path)
     
