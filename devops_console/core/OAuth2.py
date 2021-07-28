@@ -15,15 +15,11 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with devops-console-backend.  If not, see <https://www.gnu.org/licenses/>.
 
-
-
-
 class OAuth2(object):
     """OAuth2 Core"""
 
     def __init__(self, config):
         self.config = config
-        self.core =None
     
     async def init(self, app):
         pass
