@@ -127,14 +127,14 @@ setup(
     name='devops_console',
     description='DevOps Console Backend',
     url='',
-    version='0.2.1',
+    version='0.2.2',
     python_requires='>=3.7',
     packages=find_packages(exclude=['tests']),
     install_requires=[
         'aiohttp[speedups]',
         'aiohttp-swagger',
         'prometheus_async[aiohttp]',
-        'devops_sccs>=0.2.1',
+        'devops_sccs>=0.2.2',
         'devops_kubernetes>=0.0.1'
     ],
     extras_require={
