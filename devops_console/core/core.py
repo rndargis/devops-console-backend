@@ -1,7 +1,7 @@
 """Core module"""
 
 # Copyright 2019 mickybart
-# Copyright 2020 Croix Bleue du Québec
+# Copyright 2020-2022 Croix Bleue du Québec
 
 # This file is part of devops-console-backend.
 
@@ -38,4 +38,8 @@ class Core:
         ]
 
     def cleanup_background_tasks(self):
-        return []
+        return[
+            self.sccs.cleanup,
+            self.kubernetes.cleanup,
+            self.OAuth2.cleanup
+        ]

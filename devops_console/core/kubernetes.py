@@ -1,4 +1,4 @@
-# Copyright 2020 Croix Bleue du Québec
+# Copyright 2020-2022 Croix Bleue du Québec
 
 # This file is part of devops-console-backend.
 
@@ -51,3 +51,6 @@ class Kubernetes(object):
 
         async with self.core.context(bridge["cluster"]) as ctx:
             await ctx.delete_pod(pod_name, bridge["namespace"])
+
+    async def cleanup(self,app):
+        pass

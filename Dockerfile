@@ -1,6 +1,5 @@
 FROM python:3
-EXPOSE 5000
-EXPOSE 5001
+EXPOSE 5000 5001
 
 WORKDIR /usr/src/app/
 

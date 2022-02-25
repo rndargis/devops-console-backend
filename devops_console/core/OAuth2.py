@@ -1,4 +1,4 @@
-# Copyright 2021 Croix Bleue du Québec
+# Copyright 2021-2022 Croix Bleue du Québec
 
 # This file is part of devops-console-backend.
 
@@ -23,5 +23,9 @@ class OAuth2(object):
     
     async def init(self, app):
         pass
+    
     async def get_config(self):
         return self.config
+    
+    async def cleanup(self,app):
+        pass
